@@ -1,0 +1,53 @@
+version: '3'
+services: 
+
+  nginx:
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - "9999:80"
+    restart: always
+
+  redis-server: 
+    image: 'redis'
+
+  postgres-server:
+    image: postgres
+    ports: 
+      - "6666:5432"
+    env_file: 
+      - environment_variables.env
+    restart: always
+
+  worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
+    volumes:     
+      - /app/node_modules
+      - ./worker:/app
+    env_file: 
+      - environment_variables.env
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    env_file: 
+      - environment_variables.env   
+    restart: always
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    env_file: 
+      - environment_variables.env        
+    restart: always
