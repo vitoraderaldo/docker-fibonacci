@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t vitor96k/client-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true vitor96k/client-test npm run test
+
+after_success:
+  - docker build -t vitor96k/complex-client ./client
+  - docker build -t vitor96k/complex-nginx ./nginx
+  - docker build -t vitor96k/complex-server ./server
+  - docker build -t vitor96k/complex-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  
+  - docker push vitor96k/complex-client
+  - docker push vitor96k/complex-nginx
+  - docker push vitor96k/complex-server
+  - docker push vitor96k/complex-worker
