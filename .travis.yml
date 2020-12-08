@@ -20,3 +20,15 @@ after_success:
   - docker push vitor96k/complex-nginx
   - docker push vitor96k/complex-server
   - docker push vitor96k/complex-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'sa-east-1'
+  app: 'complex'
+  env: 'Complex-env'
+  bucket_name: 'elasticbeanstalk-sa-east-1-502646121377'
+  bucket_path: 'complex'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
